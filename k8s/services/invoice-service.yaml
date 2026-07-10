@@ -22,7 +22,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: invoice-service
-          image: ghcr.io/YOUR_GITHUB_USERNAME/bakery-microservices/invoice-service:latest
+          image: ghcr.io/singhgauravlinux-coder/bakery-demo/invoice-service:84b5e51
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
