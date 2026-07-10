@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Crumb &amp; Ember — Neighborhood Bakery</title>
+<meta name="description" content="Slow-fermented breads and viennoiserie, baked through the day. See what's coming out of the oven and order for pickup." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Karla:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --espresso: #231712;
+    --char: #1a100c;
+    --flour: #f7efe2;
+    --flour-dim: #cfc2ad;
+    --butter: #e9b44c;
+    --pistachio: #9da65d;
+    --jam: #a63a3a;
+    --line: rgba(247, 239, 226, 0.14);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--espresso);
+    color: var(--flour);
+    font-family: 'Karla', sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(35, 23, 18, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; max-width: 1120px; margin: 0 auto; }
+  .brand { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.35rem; text-decoration: none; letter-spacing: 0.01em; }
+  .brand em { font-style: normal; color: var(--butter); }
+  nav ul { display: flex; gap: 28px; list-style: none; }
+  nav a { text-decoration: none; font-size: 0.95rem; color: var(--flour-dim); transition: color 160ms; }
+  nav a:hover, nav a:focus-visible { color: var(--butter); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--butter); outline-offset: 3px; border-radius: 2px; }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 96px 0 72px; border-bottom: 1px solid var(--line); }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--pistachio); margin-bottom: 20px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(2.6rem, 6.5vw, 4.6rem);
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+    max-width: 15ch;
+  }
+  h1 .lit { color: var(--butter); }
+  .hero p { max-width: 52ch; margin-top: 24px; color: var(--flour-dim); font-size: 1.08rem; }
+  .hero-actions { margin-top: 36px; display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 13px 26px; border-radius: 999px;
+    font-weight: 700; font-size: 0.95rem; text-decoration: none; border: 1px solid transparent;
+    cursor: pointer; transition: transform 160ms, background 160ms;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--butter); color: var(--char); }
+  .btn-ghost { border-color: var(--line); color: var(--flour); background: transparent; }
+  .btn-ghost:hover { border-color: var(--butter); }
+
+  /* ---------- signature: oven rail ---------- */
+  .oven-rail { border-bottom: 1px solid var(--line); background: var(--char); overflow: hidden; }
+  .oven-rail-head {
+    display: flex; align-items: baseline; gap: 14px;
+    padding: 20px 24px 0; max-width: 1120px; margin: 0 auto;
+  }
+  .oven-rail-head h2 { font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 600; }
+  .live-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--jam); margin-right: 8px; animation: pulse 2.4s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.35 } }
+  .oven-rail-head small { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--flour-dim); letter-spacing: 0.1em; }
+  .rail-scroll { display: flex; gap: 0; overflow-x: auto; padding: 18px 24px 26px; max-width: 1120px; margin: 0 auto; scrollbar-width: thin; }
+  .bake {
+    min-width: 190px; padding: 14px 18px;
+    border-left: 1px solid var(--line);
+  }
+  .bake:last-child { border-right: 1px solid var(--line); }
+  .bake time { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 600; color: var(--butter); font-variant-numeric: tabular-nums; }
+  .bake .what { margin-top: 6px; font-size: 0.92rem; }
+  .bake .batch { margin-top: 2px; font-size: 0.78rem; color: var(--flour-dim); font-family: 'JetBrains Mono', monospace; }
+  .bake.done time { color: var(--flour-dim); text-decoration: line-through; text-decoration-thickness: 1px; }
+
+  /* ---------- sections ---------- */
+  section { padding: 80px 0; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; margin-bottom: 40px; flex-wrap: wrap; }
+  h2.big { font-family: 'Fraunces', serif; font-weight: 600; font-size: clamp(1.8rem, 3.5vw, 2.6rem); }
+  .section-head p { color: var(--flour-dim); max-width: 40ch; }
+
+  /* ---------- products ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .card { background: var(--espresso); padding: 26px 24px 24px; display: flex; flex-direction: column; gap: 10px; transition: background 180ms; }
+  .card:hover { background: var(--char); }
+  .card .cat { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pistachio); }
+  .card h3 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.3rem; }
+  .card p { font-size: 0.9rem; color: var(--flour-dim); flex: 1; }
+  .card .row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+  .price { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--butter); font-variant-numeric: tabular-nums; }
+  .add {
+    background: transparent; border: 1px solid var(--line); color: var(--flour);
+    border-radius: 999px; padding: 7px 16px; font-family: 'Karla', sans-serif; font-weight: 700;
+    font-size: 0.82rem; cursor: pointer; transition: all 160ms;
+  }
+  .add:hover { border-color: var(--butter); color: var(--butter); }
+  .add.added { background: var(--pistachio); border-color: var(--pistachio); color: var(--char); }
+
+  /* ---------- craft ---------- */
+  .craft { border-top: 1px solid var(--line); }
+  .craft-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 48px; }
+  .craft-item h3 { font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 10px; }
+  .craft-item .k { font-family: 'JetBrains Mono', monospace; color: var(--butter); font-size: 1.9rem; font-weight: 600; display: block; margin-bottom: 12px; font-variant-numeric: tabular-nums; }
+  .craft-item p { color: var(--flour-dim); font-size: 0.95rem; }
+
+  /* ---------- footer ---------- */
+  footer { border-top: 1px solid var(--line); padding: 48px 0 60px; color: var(--flour-dim); font-size: 0.9rem; }
+  .foot { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  footer .brand { font-size: 1.1rem; color: var(--flour); }
+  .status-line { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; margin-top: 10px; }
+  .status-line .ok { color: var(--pistachio); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+  @media (max-width: 640px) {
+    nav ul { display: none; }
+    .hero { padding: 64px 0 48px; }
+    section { padding: 56px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a class="brand" href="#">Crumb <em>&amp;</em> Ember</a>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="#oven">Today's bakes</a></li>
+        <li><a href="#shop">Shop</a></li>
+        <li><a href="#craft">The craft</a></li>
+        <li><a href="#visit">Visit</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Neighborhood bakery — est. on a wood table</p>
+      <h1>Baked through the day, <span class="lit">never before dawn only.</span></h1>
+      <p>Most bakeries finish by sunrise. We keep the oven lit until close — baguettes at 6:30 and again at 3:30, galettes after lunch. Check the rail below to catch a loaf while it's still warm.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#shop">Order for pickup</a>
+        <a class="btn btn-ghost" href="#oven">What's in the oven</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="oven-rail" id="oven">
+    <div class="oven-rail-head">
+      <h2><span class="live-dot" aria-hidden="true"></span>Out of the oven today</h2>
+      <small id="schedule-date">SCHEDULE</small>
+    </div>
+    <div class="rail-scroll" id="rail" role="list"></div>
+  </div>
+
+  <section id="shop">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="big">The counter</h2>
+        <p>Everything below is baked in-house from stone-milled flour. Add to your basket and pick up at the counter.</p>
+      </div>
+      <div class="grid" id="products"></div>
+    </div>
+  </section>
+
+  <section class="craft" id="craft">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="big">Slow numbers</h2>
+      </div>
+      <div class="craft-grid">
+        <div class="craft-item">
+          <span class="k">48h</span>
+          <h3>Fermentation</h3>
+          <p>Our country loaf proofs for two full days. Time does the flavor work that yeast alone can't.</p>
+        </div>
+        <div class="craft-item">
+          <span class="k">27</span>
+          <h3>Butter layers</h3>
+          <p>Every croissant is laminated by hand with cultured butter from a single alpine dairy.</p>
+        </div>
+        <div class="craft-item">
+          <span class="k">8</span>
+          <h3>Bakes a day</h3>
+          <p>Small batches, staggered from 6:30 to 15:30, so the shelf is never more than a few hours old.</p>
+        </div>
+        <div class="craft-item">
+          <span class="k">3</span>
+          <h3>Suppliers</h3>
+          <p>One mill, one dairy, one orchard. We know the people behind every ingredient by name.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="visit">
+  <div class="wrap foot">
+    <div>
+      <a class="brand" href="#">Crumb <em>&amp;</em> Ember</a>
+      <p>12 Rue du Levain · Tue–Sun, 7:00–18:00</p>
+      <p class="status-line">platform: <span class="ok" id="platform-status">checking…</span></p>
+    </div>
+    <div>
+      <p>Wholesale &amp; standing orders: hello@crumbandember.dev</p>
+      <p>Day-old shelf discounted 50% after 17:00 — nothing gets thrown away.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var API = '/api';
+
+  // Static fallbacks keep the page useful when the gateway is unreachable
+  // (e.g. viewing this file locally before deploying to the cluster).
+  var FALLBACK_SCHEDULE = [
+    { time: '06:30', product: 'Baguette Tradition', batch: 40 },
+    { time: '07:00', product: 'Butter Croissant', batch: 60 },
+    { time: '07:15', product: 'Pain au Chocolat', batch: 48 },
+    { time: '08:00', product: 'Levain Country Loaf', batch: 24 },
+    { time: '09:30', product: 'Cardamom Knot', batch: 40 },
+    { time: '11:00', product: 'Focaccia al Rosmarino', batch: 20 },
+    { time: '13:00', product: 'Sour Cherry Galette', batch: 12 },
+    { time: '15:30', product: 'Second bake: Baguette', batch: 40 }
+  ];
+  var FALLBACK_PRODUCTS = [
+    { id: 'p-1', name: 'Levain Country Loaf', category: 'bread', price: 8.50, description: '48-hour fermented sourdough, dark bake.' },
+    { id: 'p-3', name: 'Butter Croissant', category: 'viennoiserie', price: 4.25, description: '27 layers of cultured butter.' },
+    { id: 'p-4', name: 'Cardamom Knot', category: 'viennoiserie', price: 4.75, description: 'Swedish-style bun, freshly ground cardamom.' },
+    { id: 'p-5', name: 'Pain au Chocolat', category: 'viennoiserie', price: 4.50, description: 'Two batons of 70% chocolate.' },
+    { id: 'p-7', name: 'Pistachio Financier', category: 'patisserie', price: 3.75, description: 'Brown-butter almond cake, Sicilian pistachio.' },
+    { id: 'p-8', name: 'Sour Cherry Galette', category: 'patisserie', price: 6.25, description: 'Rye crust, whole sour cherries.' },
+    { id: 'p-10', name: 'Baguette Tradition', category: 'bread', price: 3.90, description: 'Slow-fermented, thin crackling crust.' },
+    { id: 'p-12', name: 'Espresso Walnut Babka', category: 'patisserie', price: 9.00, description: 'Twisted brioche, espresso frangipane.' }
+  ];
+
+  function getJSON(path) {
+    return fetch(API + path, { headers: { accept: 'application/json' } })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+  }
+
+  function renderSchedule(bakes, dateLabel) {
+    var rail = document.getElementById('rail');
+    var now = new Date();
+    var nowMinutes = now.getHours() * 60 + now.getMinutes();
+    rail.innerHTML = '';
+    bakes.forEach(function (b) {
+      var parts = b.time.split(':');
+      var mins = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+      var el = document.createElement('div');
+      el.className = 'bake' + (mins < nowMinutes ? ' done' : '');
+      el.setAttribute('role', 'listitem');
+      el.innerHTML = '<time>' + b.time + '</time><div class="what"></div><div class="batch">batch of ' + b.batch + '</div>';
+      el.querySelector('.what').textContent = b.product;
+      rail.appendChild(el);
+    });
+    document.getElementById('schedule-date').textContent = dateLabel;
+  }
+
+  function renderProducts(products) {
+    var grid = document.getElementById('products');
+    grid.innerHTML = '';
+    products.forEach(function (p) {
+      var card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML =
+        '<span class="cat"></span><h3></h3><p></p>' +
+        '<div class="row"><span class="price">€' + p.price.toFixed(2) + '</span>' +
+        '<button class="add" type="button">Add to basket</button></div>';
+      card.querySelector('.cat').textContent = p.category;
+      card.querySelector('h3').textContent = p.name;
+      card.querySelector('p').textContent = p.description;
+      card.querySelector('.add').addEventListener('click', function () {
+        var btn = this;
+        btn.textContent = 'Added ✓';
+        btn.classList.add('added');
+        fetch(API + '/carts/guest/items', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ productId: p.id, quantity: 1 })
+        }).catch(function () { /* offline mode: basket is visual only */ });
+        setTimeout(function () { btn.textContent = 'Add to basket'; btn.classList.remove('added'); }, 1800);
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  // Oven schedule (signature element) — live from baking-schedule-service.
+  getJSON('/schedule/today')
+    .then(function (data) { renderSchedule(data.bakes, data.date); })
+    .catch(function () { renderSchedule(FALLBACK_SCHEDULE, 'OFFLINE PREVIEW'); });
+
+  // Catalog — live from product-catalog-service.
+  getJSON('/products')
+    .then(function (products) { renderProducts(products); markUp(true); })
+    .catch(function () { renderProducts(FALLBACK_PRODUCTS); markUp(false); });
+
+  function markUp(up) {
+    var el = document.getElementById('platform-status');
+    el.textContent = up ? 'all services up' : 'static preview';
+  }
+})();
+</script>
+</body>
+</html>
