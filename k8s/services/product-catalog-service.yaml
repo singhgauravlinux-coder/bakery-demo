@@ -22,7 +22,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: product-catalog-service
-          image: ghcr.io/singhgauravlinux-coder/bakery-demo/product-catalog-service:e4e79bf
+          image: ghcr.io/singhgauravlinux-coder/bakery-demo/product-catalog-service:1349d0d
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
